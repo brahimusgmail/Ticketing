@@ -1,6 +1,7 @@
 # 🚀 TicketingAI
 
-> Modern Ticket Management System built with **.NET 10**, **Blazor**, **SQL Server** and a complete **Retrieval-Augmented Generation (RAG)** engine powered by a local **Llama 3.2** model.
+Modern enterprise Ticket Management System built with **.NET 10**, **Blazor**, **SQL Server** and a complete **AI-powered RAG engine** using **Llama 3.2**, **Nomic Embeddings**, **Qdrant** and **MCP**.
+
 <p align="center">
 
 ![.NET](https://img.shields.io/badge/.NET-10-blue)
