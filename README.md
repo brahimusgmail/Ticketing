@@ -215,6 +215,21 @@ https://localhost:7146/swagger
 dotnet run --project src/Ticketing.Blazor
 ```
 
+## 📸 Screenshots
+
+### Tickets
+
+![Tickets](docs/screenshots/tickets.png)
+
+### Ticket Details
+
+![Ticket Details](docs/screenshots/ticket-detail.png)
+
+### Categories
+
+![Categories](docs/screenshots/categories.png)
+
+
 ## 🤖 AI Features
 
 Ticketing includes several AI capabilities built with modern LLM technologies.
