@@ -326,20 +326,23 @@ Implemented tools:
 - List Available Tools
 
 
-                 👤 User
-                    │
-                    ▼
-            🤖 AI Agent (MCP)
-                    │
-      ┌─────────────┼─────────────┐
-      │             │             │
-      ▼             ▼             ▼
- Get Ticket     Count Open     List Tools
-    Tool         Tickets Tool     Tool
-      │             │             │
-      └─────────────┼─────────────┘
-                    ▼
-             🗄️ SQL Server
+```text
+                  👤 User
+                     │
+                     ▼
+              🤖 AI Agent (MCP)
+                     │
+      ┌──────────────┼──────────────┐
+      │              │              │
+      ▼              ▼              ▼
+ Get Ticket      Count Open     List Tools
+  by Id Tool     Tickets Tool      Tool
+      │              │              │
+      └──────────────┼──────────────┘
+                     │
+                     ▼
+               🗄️ SQL Server
+```
 
 
 ### AI Stack
