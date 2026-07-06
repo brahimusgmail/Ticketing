@@ -137,7 +137,7 @@ local Large Language Models
 The project follows the principles of Clean Architecture to ensure maintainability, scalability, and testability.
 
 <p align="center">
-  <img src="docs/architecture-rag-mcp.png" width="100%" alt="Architecture Diagram">
+  <img src="docs/architecture.png" width="100%" alt="Architecture Diagram">
 </p>
 
 ### Project Structure
@@ -251,65 +251,29 @@ Example use cases:
 
 ### RAG Pipeline
 
-The Retrieval-Augmented Generation pipeline consists of:
+The Retrieval-Augmented Generation (RAG) pipeline consists of:
 
 1. Document ingestion
 2. Text chunking
-3. Embedding generation
+3. Embedding generation using Nomic Embeddings
 4. Vector storage in Qdrant
 5. Semantic search
-6. LLM response generation
+6. Prompt construction with retrieved context
+7. Response generation using Llama 3.2
 
+<p align="center">
+  <img src="docs/rag-mcp.png" width="100%" alt="RAG and MCP Pipeline">
+</p>
 
-                 User Question
-                       │
-                       ▼
-              Generate Embedding
-                       │
-                       ▼
-            Search in Qdrant Vector DB
-                       │
-                       ▼
-           Retrieve Relevant Chunks
-                       │
-                       ▼
-          Build Prompt + Context
-                       │
-                       ▼
-                  Llama 3.2
-                       │
-                       ▼
-                  Final Answer
+### MCP Integration
 
+The AI Agent can invoke external tools through the Model Context Protocol (MCP).
 
-## MCP Integration
-
-The AI Agent can invoke external tools through the Model Context Protocol.
-
-Implemented tools:
+**Implemented tools**
 
 - Get Ticket by Id
 - Count Open Tickets
 - List Available Tools
-
-
-```text
-                  👤 User
-                     │
-                     ▼
-              🤖 AI Agent (MCP)
-                     │
-      ┌──────────────┼──────────────┐
-      │              │              │
-      ▼              ▼              ▼
- Get Ticket      Count Open     List Tools
-  by Id Tool     Tickets Tool      Tool
-      │              │              │
-      └──────────────┼──────────────┘
-                     │
-                     ▼
-               🗄️ SQL Server
-```
 
 
 ### AI Stack
