@@ -1,0 +1,200 @@
+@page "/tickets"
+@using Ticketing.Shared.Contracts.Tickets
+@using static Ticketing.Shared.Enums.Ticket.TicketEnums
+@inject Ticketing.Client.Wasm.Services.Api.TicketsApiClient Api
+
+<PageTitle>Tickets</PageTitle>
+
+<div class="tickets-page">
+    <div class="tickets-header">
+        <div>
+            <h1 class="tickets-title">Tickets</h1>
+            <p class="tickets-subtitle">Suivez, consultez et gérez les tickets de votre espace.</p>
+        </div>
+
+        <a class="btn btn-primary tickets-create-btn" href="/tickets/new">
+            + Nouveau ticket
+        </a>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(_error))
+    {
+        <div class="alert alert-danger tickets-alert" role="alert">
+            @_error
+        </div>
+    }
+
+    @if (_loading)
+    {
+        <div class="tickets-card tickets-state">
+            <p class="mb-0">Chargement des tickets…</p>
+        </div>
+    }
+    else if (_items.Count == 0)
+    {
+        <div class="tickets-card tickets-empty-state">
+            <div class="tickets-empty-icon">🎫</div>
+            <h3>Aucun ticket</h3>
+            <p class="mb-3">Commencez par créer votre premier ticket.</p>
+            <a class="btn btn-primary tickets-create-btn" href="/tickets/new">
+                Créer un ticket
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="tickets-card tickets-table-card">
+            <div class="table-responsive">
+                <table class="table tickets-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Auteur</th>
+                            <th>Catégorie</th>
+                            <th>Statut</th>
+                            <th>Créé</th>
+                            <th>MAJ</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in _items)
+                        {
+                            <tr>
+                                <td>
+                                    <a class="ticket-link" href="/tickets/@t.Id">@t.Title</a>
+                                </td>
+
+                                <td class="ticket-muted">
+                                    @(t.Author?.FullName ?? t.Author?.Email ?? t.AuthorId.ToString() ?? "-")
+                                </td>
+
+                                <td>
+                                    <span class="ticket-category-badge">
+                                        @(t.Category?.Name ?? t.CategoryId.ToString() ?? "-")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="badge ticket-status-badge @(GetStatusClass(t.Statut))">
+                                        @t.Statut.GetDisplayName()
+                                    </span>
+                                </td>
+
+                                <td class="ticket-date">
+                                    @t.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+                                <td class="ticket-date">
+                                    @t.UpdatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+                                <td class="text-end">
+                                    <div class="ticket-actions">
+                                        <button class="btn btn-outline-danger btn-sm ticket-delete-btn"
+                                                @onclick="() => AskDelete(t.Id)">
+                                            Supprimer
+                                        </button>
+                                    </div>
+
+                                    @if (_deleteCandidateId == t.Id)
+                                    {
+                                        <div class="ticket-confirm-box">
+                                            <span class="ticket-confirm-text">Confirmer la suppression ?</span>
+
+                                            <div class="ticket-confirm-actions">
+                                                <button class="btn btn-danger btn-sm"
+                                                        @onclick="() => ConfirmDeleteAsync(t.Id)">
+                                                    Oui
+                                                </button>
+
+                                                <button class="btn btn-secondary btn-sm"
+                                                        @onclick="CancelDelete">
+                                                    Non
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private bool _loading = true;
+    private string? _error;
+    private List<TicketResponse> _items = new();
+    private Guid? _deleteCandidateId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadAsync();
+        _loading = false;
+    }
+
+    private static string GetStatusClass(Status s) => s switch
+    {
+        Status.New => "status-new",
+        Status.InProcess => "status-inprocess",
+        Status.Closed => "status-closed",
+        _ => "status-default"
+    };
+
+    private void AskDelete(Guid id)
+    {
+        _error = null;
+        _deleteCandidateId = id;
+    }
+
+    private void CancelDelete()
+    {
+        _deleteCandidateId = null;
+    }
+
+    private async Task ConfirmDeleteAsync(Guid id)
+    {
+        _error = null;
+
+        try
+        {
+            var ok = await Api.DeleteAsync(id);
+
+            if (!ok)
+            {
+                _error = "Ticket introuvable (déjà supprimé ?).";
+                _deleteCandidateId = null;
+                return;
+            }
+
+            _items.RemoveAll(t => t.Id == id);
+            _deleteCandidateId = null;
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message.Contains("403")
+                ? "Vous n'êtes pas autorisé à supprimer ce ticket."
+                : "Erreur lors de la suppression du ticket.";
+
+            _deleteCandidateId = null;
+        }
+    }
+
+    private async Task ReloadAsync()
+    {
+        try
+        {
+            _error = null;
+            _items = (await Api.GetAllAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+            _items = new();
+        }
+    }
+}

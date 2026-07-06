@@ -1,0 +1,64 @@
+@page "/login"
+@inject Ticketing.Client.Server.Services.Auth.AuthService Auth
+@inject NavigationManager Nav
+
+<div class="login-page">
+    <div class="login-card">
+        <h3 class="login-title">Connexion</h3>
+
+        @if (!string.IsNullOrWhiteSpace(_error))
+        {
+            <div class="alert alert-danger">@_error</div>
+        }
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control form-control-sm login-input"
+                   @bind="_email"
+                   @bind:event="oninput" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Mot de passe</label>
+            <input type="password"
+                   class="form-control form-control-sm login-input"
+                   @bind="_password"
+                   @bind:event="oninput" />
+        </div>
+
+        <button class="btn btn-primary login-button"
+                @onclick="OnLogin"
+                disabled="@_loading">
+            @(_loading ? "Connexion..." : "Se connecter")
+        </button>
+    </div>
+</div>
+
+@code {
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private bool _loading;
+    private string? _error;
+
+    private async Task OnLogin()
+    {
+        _error = null;
+        _loading = true;
+
+        try
+        {
+            var (ok, err) = await Auth.LoginAsync(_email, _password);
+            if (!ok)
+            {
+                _error = err;
+                return;
+            }
+
+            Nav.NavigateTo("/tickets");
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}

@@ -1,0 +1,97 @@
+@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+
+<PageTitle>Accueil</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <div class="home-page">
+            <section class="hero-card">
+                <div class="hero-badge">Ticketing</div>
+
+                <h1 class="hero-title">Gérez vos tickets simplement.</h1>
+
+                <p class="hero-text">
+                    Retrouvez vos tickets, organisez vos catégories et suivez les actions
+                    importantes dans une interface claire et cohérente.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="btn btn-primary hero-btn" href="/tickets">Voir les tickets</a>
+                    <a class="btn btn-outline-light hero-btn" href="/categories">Voir les catégories</a>
+                </div>
+            </section>
+
+            <section class="home-grid">
+                <article class="info-card">
+                    <div class="info-icon">🎫</div>
+                    <h2>Tickets</h2>
+                    <p>
+                        Consulte, crée et mets à jour les tickets dans une interface plus lisible.
+                    </p>
+                </article>
+
+                <article class="info-card">
+                    <div class="info-icon">🏷️</div>
+                    <h2>Catégories</h2>
+                    <p>
+                        Structure l’information avec des catégories simples à gérer.
+                    </p>
+                </article>
+
+                <article class="info-card">
+                    <div class="info-icon">✅</div>
+                    <h2>Suivi</h2>
+                    <p>
+                        Commente, modifie et clôture les tickets depuis une expérience unifiée.
+                    </p>
+                </article>
+            </section>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <div class="home-page">
+            <section class="hero-card">
+                <div class="hero-badge">Ticketing</div>
+
+                <h1 class="hero-title">Bienvenue sur Ticketing Server.</h1>
+
+                <p class="hero-text">
+                    Connecte-toi pour accéder à l’application, consulter les tickets
+                    et gérer les catégories dans une interface sécurisée.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="btn btn-primary hero-btn" href="/login">Se connecter</a>
+                </div>
+            </section>
+
+            <section class="home-grid">
+                <article class="info-card">
+                    <div class="info-icon">🔐</div>
+                    <h2>Authentification</h2>
+                    <p>
+                        L’accès à l’application est protégé pour sécuriser les actions utilisateur.
+                    </p>
+                </article>
+
+                <article class="info-card">
+                    <div class="info-icon">🧩</div>
+                    <h2>Organisation</h2>
+                    <p>
+                        Une fois connecté, tu peux suivre les tickets et organiser les catégories.
+                    </p>
+                </article>
+
+                <article class="info-card">
+                    <div class="info-icon">⚡</div>
+                    <h2>Expérience fluide</h2>
+                    <p>
+                        Une interface moderne et cohérente entre Blazor Server et WASM.
+                    </p>
+                </article>
+            </section>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>

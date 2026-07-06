@@ -1,0 +1,89 @@
+@page "/"
+@layout MinimalLayout
+@using Microsoft.AspNetCore.Components.Authorization
+
+<div class="home-page">
+    <section class="hero-section">
+        <div class="hero-content">
+            <span class="hero-badge">Ticketing System</span>
+            <h1>Bienvenue sur votre espace de gestion des tickets</h1>
+            <p>
+                Gérez vos tickets, suivez leur avancement, ajoutez des commentaires
+                et administrez les catégories depuis une interface simple et moderne.
+            </p>
+
+            <div class="hero-actions">
+                <AuthorizeView>
+                    <Authorized>
+                        <a class="btn btn-primary" href="/tickets">
+                            Voir les tickets
+                        </a>
+
+                        <a class="btn btn-outline-primary" href="/categories">
+                            Gérer les catégories
+                        </a>
+                    </Authorized>
+
+                    <NotAuthorized>
+                        <a class="btn btn-primary" href="/login">
+                            Se connecter
+                        </a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </div>
+    </section>
+
+    <section class="quick-actions">
+        <AuthorizeView>
+            <Authorized>
+                <a class="quick-card text-decoration-none" href="/tickets">
+                    <div class="quick-icon">🎫</div>
+                    <h4>Tickets</h4>
+                    <p>Consulter, créer, modifier, clôturer ou supprimer des tickets.</p>
+                </a>
+
+                <a class="quick-card text-decoration-none" href="/tickets/new">
+                    <div class="quick-icon">➕</div>
+                    <h4>Nouveau ticket</h4>
+                    <p>Créer rapidement un ticket et l’associer à une catégorie.</p>
+                </a>
+
+                <a class="quick-card text-decoration-none" href="/categories">
+                    <div class="quick-icon">🗂️</div>
+                    <h4>Catégories</h4>
+                    <p>Organiser les tickets avec une gestion simple des catégories.</p>
+                </a>
+            </Authorized>
+
+            <NotAuthorized>
+                <a class="quick-card text-decoration-none" href="/login">
+                    <div class="quick-icon">🔐</div>
+                    <h4>Connexion</h4>
+                    <p>Connectez-vous pour accéder à la gestion des tickets.</p>
+                </a>
+            </NotAuthorized>
+        </AuthorizeView>
+    </section>
+
+    <section class="info-section">
+        <div class="info-card">
+            <h5>Fonctionnalités disponibles</h5>
+            <ul>
+                <li>Authentification sécurisée par JWT</li>
+                <li>CRUD complet sur les tickets</li>
+                <li>Ajout de commentaires</li>
+                <li>Clôture des tickets</li>
+                <li>Gestion des catégories</li>
+            </ul>
+        </div>
+
+        <div class="info-card">
+            <h5>Conseil</h5>
+            <p>
+                Commencez par consulter la liste des tickets ou créez directement un nouveau ticket
+                depuis le menu latéral.
+            </p>
+        </div>
+    </section>
+</div>

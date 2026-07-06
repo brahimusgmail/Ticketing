@@ -1,0 +1,131 @@
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject Ticketing.Client.Wasm.Services.AuthService Auth
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider AuthStateProvider
+
+<div class="top-row ps-3 navbar navbar-dark wasm-topbar">
+    <a class="navbar-brand brand-title" href="">
+        <span>Ticketing</span>
+        <span class="brand-subtitle">System</span>
+    </a>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler d-none" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler')?.click()">
+    <nav class="nav flex-column modern-nav">
+        <AuthorizeView>
+            <Authorized>
+                <div class="user-panel modern-user-panel mb-3">
+                    <div class="user-avatar">
+                        @GetInitial()
+                    </div>
+
+                    <div class="user-details">
+                        <div class="user-name">@DisplayName</div>
+
+                        @if (_roles.Count > 0)
+                        {
+                            <div class="user-role">
+                                @string.Join(", ", _roles)
+                            </div>
+                        }
+                    </div>
+
+                    <button class="btn btn-outline-light btn-sm modern-logout-btn" @onclick="LogoutAsync">
+                        Logout
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <NavLink class="nav-link modern-nav-link" href="/tickets">
+                        <span class="nav-icon">🎫</span>
+                        <span>Tickets</span>
+                    </NavLink>
+
+                    <NavLink class="nav-link modern-nav-link" href="/categories">
+                        <span class="nav-icon">📁</span>
+                        <span>Catégories</span>
+                    </NavLink>
+                </div>
+            </Authorized>
+
+            <NotAuthorized>
+                <div class="guest-panel">
+                    <NavLink class="btn btn-light text-dark mt-2 modern-login-btn" href="/login">
+                        Se connecter
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+    </nav>
+</div>
+
+@code {
+    private string DisplayName = "Connecté";
+    private readonly List<string> _roles = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        await LoadUserAsync();
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        await LoadUserAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadUserAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated != true)
+        {
+            DisplayName = "Connecté";
+            _roles.Clear();
+            return;
+        }
+
+        DisplayName =
+            user.FindFirst("fullName")?.Value
+            ?? user.FindFirst(ClaimTypes.Name)?.Value
+            ?? user.FindFirst("email")?.Value
+            ?? user.FindFirst(ClaimTypes.Email)?.Value
+            ?? "Connecté";
+
+        _roles.Clear();
+
+        var roleClaims = user.FindAll(ClaimTypes.Role).Select(x => x.Value).ToList();
+        if (roleClaims.Count == 0)
+        {
+            roleClaims = user.FindAll("role").Select(x => x.Value).ToList();
+        }
+
+        _roles.AddRange(roleClaims);
+    }
+
+    private async Task LogoutAsync()
+    {
+        await Auth.LogoutAsync();
+        Nav.NavigateTo("/login", true);
+    }
+
+    private string GetInitial()
+    {
+        if (string.IsNullOrWhiteSpace(DisplayName))
+        {
+            return "?";
+        }
+
+        return DisplayName.Substring(0, 1).ToUpperInvariant();
+    }
+
+    public void Dispose()
+    {
+        AuthStateProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+}

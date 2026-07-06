@@ -1,0 +1,34 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@inject ITokenStore TokenStore
+@inject JwtAuthStateProvider JwtAuth
+@inject CurrentUserService CurrentUser
+
+<span style="display:none"></span>
+
+@code {
+    private bool _done;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _done) return;
+        _done = true;
+
+        // Charger le token depuis le navigateur (uniquement si c'est SessionTokenStore)
+        if (TokenStore is SessionTokenStore sessionStore)
+        {
+            await sessionStore.LoadFromBrowserAsync();
+        }
+
+        var token = await TokenStore.GetTokenAsync();
+        if (!string.IsNullOrWhiteSpace(token))
+        {
+            JwtAuth.ForceNotify();              // recalcul auth state depuis TokenStore
+            await CurrentUser.RefreshAsync();   // recharge FullName/Roles
+            await InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            CurrentUser.Clear();
+        }
+    }
+}

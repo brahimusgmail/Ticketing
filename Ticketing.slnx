@@ -1,0 +1,29 @@
+<Solution>
+  <Folder Name="/AI/">
+    <Project Path="Common.SampleDataGenerator/Common.SampleDataGenerator.csproj" Id="007fcf4c-c6ca-4f4b-ad74-44d5a44183e4" />
+  </Folder>
+  <Folder Name="/Backend/">
+    <Project Path="src/Ticketing.Api/Ticketing.Api.csproj" />
+    <Project Path="src/Ticketing.Application/Ticketing.Application.csproj" />
+    <Project Path="src/Ticketing.Domain/Ticketing.Domain.csproj" />
+    <Project Path="src/Ticketing.Infrastructure/Ticketing.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Frontend/">
+    <Project Path="src/Ticketing.Client.Server/Ticketing.Client.Server.csproj" />
+    <Project Path="src/Ticketing.Client.Wasm/Ticketing.Client.Wasm.csproj" />
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="src/Ticketing.Shared/Ticketing.Shared.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="azure-pipelines.yml" />
+    <File Path="Directory.Build.props" />
+    <File Path="docker-compose.yml" />
+    <File Path="Dockerfile" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="tests/Ticketing.Tests/Ticketing.Tests.csproj" />
+  </Folder>
+</Solution>

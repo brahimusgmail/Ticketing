@@ -1,0 +1,275 @@
+.ticket-edit-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.ticket-hero-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: 1.6rem;
+    border-radius: 1.4rem;
+    background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 30%), linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    color: #f8fafc;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.14);
+}
+
+.ticket-hero-main {
+    min-width: 0;
+}
+
+.ticket-eyebrow {
+    display: inline-block;
+    margin-bottom: 0.55rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(96, 165, 250, 0.14);
+    color: #bfdbfe;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ticket-title {
+    margin: 0;
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    line-height: 1.1;
+    font-weight: 800;
+    word-break: break-word;
+}
+
+.ticket-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 1rem;
+}
+
+.ticket-secondary-meta {
+    margin-top: 0.9rem;
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+.meta-text {
+    color: #cbd5e1;
+}
+
+.meta-separator {
+    color: #64748b;
+}
+
+.ticket-hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 220px;
+}
+
+.action-btn {
+    border-radius: 0.9rem;
+    padding: 0.8rem 1rem;
+    font-weight: 600;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 1.5rem;
+}
+
+.content-column {
+    min-width: 0;
+}
+
+.content-card,
+.state-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1.25rem;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.content-card {
+    padding: 1.35rem;
+}
+
+.state-card {
+    padding: 1.5rem;
+}
+
+.section-header {
+    margin-bottom: 1.1rem;
+}
+
+.section-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.section-subtitle {
+    margin: 0.35rem 0 0;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+.state-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.state-text {
+    margin-top: 0.45rem;
+    margin-bottom: 1rem;
+    color: #475569;
+    line-height: 1.6;
+}
+
+.custom-alert {
+    margin-bottom: 0;
+    border-radius: 1rem;
+}
+
+.modern-badge {
+    padding: 0.5rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.status-new {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.status-in-progress {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.status-closed {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-default {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+.comment-composer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.comment-textarea {
+    min-height: 120px;
+    border-radius: 1rem;
+    resize: vertical;
+}
+
+.comment-actions {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    margin-top: 1rem;
+}
+
+.comment-card {
+    padding: 1rem 1rem 0.9rem;
+    border-radius: 1rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.comment-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.45rem;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.comment-author {
+    font-weight: 700;
+    color: #334155;
+}
+
+.comment-dot {
+    color: #94a3b8;
+}
+
+.comment-date {
+    color: #64748b;
+}
+
+.comment-message {
+    color: #0f172a;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.empty-comments {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    color: #64748b;
+}
+
+@media (max-width: 1100px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 992px) {
+    .ticket-hero-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ticket-hero-actions {
+        min-width: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .ticket-edit-page {
+        padding: 1rem;
+    }
+
+    .ticket-hero-card,
+    .content-card,
+    .state-card {
+        border-radius: 1rem;
+    }
+
+    .ticket-title {
+        font-size: 1.8rem;
+    }
+
+    .action-btn {
+        width: 100%;
+    }
+}

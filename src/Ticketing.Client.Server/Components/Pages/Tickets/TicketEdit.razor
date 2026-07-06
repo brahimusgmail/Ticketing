@@ -1,0 +1,309 @@
+@page "/tickets/{Id}"
+@using Ticketing.Client.Server.Services.Api
+@using Ticketing.Shared.Contracts.Tickets
+@using Ticketing.Shared.Contracts.Categories
+@using Ticketing.Client.Server.Components.Tickets
+@using static Ticketing.Shared.Enums.Ticket.TicketEnums
+@inject TicketsApiClient TicketsApi
+@inject CategoriesApiClient CategoriesApi
+@inject NavigationManager Nav
+
+<PageTitle>Détail ticket</PageTitle>
+
+<div class="ticket-edit-page">
+    @if (_loading)
+    {
+        <section class="state-card">
+            <div class="state-title">Chargement…</div>
+            <p class="state-text">Récupération du ticket en cours.</p>
+        </section>
+    }
+    else if (!string.IsNullOrWhiteSpace(_error))
+    {
+        <div class="alert alert-danger custom-alert">@_error</div>
+    }
+    else if (_ticket is null)
+    {
+        <section class="state-card">
+            <div class="state-title">Ticket introuvable</div>
+            <p class="state-text">Le ticket demandé n’existe pas ou n’est plus accessible.</p>
+            <a class="btn btn-outline-secondary action-btn" href="/tickets">Retour à la liste</a>
+        </section>
+    }
+    else
+    {
+        <section class="ticket-hero-card">
+            <div class="ticket-hero-main">
+                <div class="ticket-eyebrow">Ticketing</div>
+                <h1 class="ticket-title">@_ticket.Title</h1>
+
+                <div class="ticket-meta">
+                    <span class="badge modern-badge @GetStatusClass(_ticket.Statut)">
+                        @_ticket.Statut.GetDisplayName()
+                    </span>
+
+                    <span class="meta-text">
+                        Créé : @_ticket.CreatedAtUtc.ToLocalTime()
+                    </span>
+
+                    <span class="meta-separator">—</span>
+
+                    <span class="meta-text">
+                        Modifié : @_ticket.UpdatedAtUtc.ToLocalTime()
+                    </span>
+                </div>
+
+                <div class="ticket-secondary-meta">
+                    <span>
+                        <strong>Catégorie :</strong> @(_ticket.Category?.Name)
+                    </span>
+                </div>
+            </div>
+
+            <div class="ticket-hero-actions">
+                @if (_ticket.Statut != Status.Closed)
+                {
+                    <button class="btn btn-outline-success action-btn"
+                            disabled="@_closeBusy"
+                            @onclick="CloseTicketAsync">
+                        @(_closeBusy ? "Clôture..." : "Clôturer le ticket")
+                    </button>
+                }
+
+                <button class="btn btn-outline-secondary action-btn" @onclick="Cancel">
+                    Retour
+                </button>
+            </div>
+        </section>
+
+        <section class="content-grid">
+            <div class="content-column">
+                <section class="content-card">
+                    <div class="section-header">
+                        <h2 class="section-title">Modifier le ticket</h2>
+                        <p class="section-subtitle">
+                            Mets à jour le titre et la catégorie sans changer la logique existante.
+                        </p>
+                    </div>
+
+                    <TicketForm Value="_form"
+                                Categories="_categories"
+                                SubmitText="Enregistrer"
+                                IsBusy="_busy"
+                                ShowCancel="true"
+                                OnSubmit="SaveAsync"
+                                OnCancel="Cancel" />
+                </section>
+            </div>
+
+            <div class="content-column">
+                <section class="content-card">
+                    <div class="section-header">
+                        <h2 class="section-title">Commentaires</h2>
+                        <p class="section-subtitle">
+                            Ajoute un commentaire et consulte l’historique du ticket.
+                        </p>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(_commentError))
+                    {
+                        <div class="alert alert-danger custom-alert mb-3">@_commentError</div>
+                    }
+
+                    <div class="comment-composer">
+                        <textarea class="form-control comment-textarea"
+                                  rows="4"
+                                  @bind="_newComment"
+                                  placeholder="Ajouter un commentaire..."></textarea>
+
+                        <div class="comment-actions">
+                            <button class="btn btn-primary action-btn"
+                                    disabled="@(_commentLoading || string.IsNullOrWhiteSpace(_newComment))"
+                                    @onclick="SubmitCommentAsync">
+                                @(_commentLoading ? "Ajout..." : "Ajouter")
+                            </button>
+                        </div>
+                    </div>
+
+                    @if (_ticket.Comments?.Count > 0)
+                    {
+                        <div class="comments-list">
+                            @foreach (var c in _ticket.Comments.OrderByDescending(x => x.CreatedAtUtc))
+                            {
+                                <article class="comment-card">
+                                    <div class="comment-meta">
+                                        <span class="comment-author">
+                                            @(c.Author?.FullName ?? c.Author?.Email ?? c.AuthorId.ToString())
+                                        </span>
+                                        <span class="comment-dot">•</span>
+                                        <span class="comment-date">@c.CreatedAtUtc.ToLocalTime()</span>
+                                    </div>
+
+                                    <div class="comment-message">@c.Message</div>
+                                </article>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-comments">
+                            Aucun commentaire pour le moment.
+                        </div>
+                    }
+                </section>
+            </div>
+        </section>
+    }
+</div>
+
+@code {
+    [Parameter] public Guid Id { get; set; } = Guid.Empty;
+
+    private bool _loading = true;
+    private bool _busy;
+    private string? _error;
+
+    private TicketResponse? _ticket;
+    private string _newComment = string.Empty;
+    private string? _commentError;
+    private bool _commentLoading;
+
+    private TicketForm.TicketFormModel _form = new();
+    private IReadOnlyList<TicketForm.CategoryItem> _categories = [];
+
+    private bool _closeBusy;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _loading = true;
+        _error = null;
+        _commentError = null;
+
+        try
+        {
+            var cats = await CategoriesApi.GetAllAsync();
+            _categories = cats
+                .Select(c => new TicketForm.CategoryItem(c.Id, c.Name))
+                .ToList();
+
+            await LoadTicketAsync();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+            _ticket = null;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task LoadTicketAsync()
+    {
+        _ticket = await TicketsApi.GetByIdAsync(Id);
+
+        if (_ticket is not null)
+        {
+            _form = new TicketForm.TicketFormModel
+            {
+                Title = _ticket.Title,
+                CategoryId = _ticket.CategoryId,
+            };
+        }
+    }
+
+    private async Task SaveAsync(TicketForm.TicketFormModel m)
+    {
+        _busy = true;
+        _error = null;
+
+        try
+        {
+            _ticket = await TicketsApi.UpdateAsync(Id, new TicketUpdateRequest(m.Title, m.CategoryId));
+
+            _form = new TicketForm.TicketFormModel
+            {
+                Title = _ticket.Title,
+                CategoryId = _ticket.CategoryId
+            };
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task SubmitCommentAsync()
+    {
+        _commentError = null;
+        _commentLoading = true;
+
+        try
+        {
+            var ok = await TicketsApi.AddCommentAsync(_ticket!.Id, _newComment.Trim());
+
+            if (!ok)
+            {
+                _commentError = "Ticket introuvable.";
+                return;
+            }
+
+            _newComment = string.Empty;
+            await LoadTicketAsync();
+        }
+        catch (Exception ex)
+        {
+            _commentError = ex.Message;
+        }
+        finally
+        {
+            _commentLoading = false;
+        }
+    }
+
+    private async Task CloseTicketAsync()
+    {
+        _error = null;
+        _closeBusy = true;
+
+        try
+        {
+            var ok = await TicketsApi.CloseAsync(Id);
+
+            if (!ok)
+            {
+                _error = "Ticket introuvable.";
+                return;
+            }
+
+            await LoadTicketAsync();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _closeBusy = false;
+        }
+    }
+
+    private string GetStatusClass(Status s) => s switch
+    {
+        Status.New => "status-new",
+        Status.InProcess => "status-in-progress",
+        Status.Closed => "status-closed",
+        _ => "status-default"
+    };
+
+    private Task Cancel()
+    {
+        Nav.NavigateTo("/tickets");
+        return Task.CompletedTask;
+    }
+}

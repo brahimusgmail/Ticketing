@@ -1,0 +1,299 @@
+@page "/tickets/{Id:guid}"
+@using Ticketing.Client.Wasm.Services.Api
+@using Ticketing.Shared.Contracts.Tickets
+@using Ticketing.Shared.Contracts.Categories
+@using Ticketing.Client.Wasm.Components.Tickets
+@using static Ticketing.Shared.Enums.Ticket.TicketEnums
+@inject TicketsApiClient TicketsApi
+@inject CategoriesApiClient CategoriesApi
+@inject NavigationManager Nav
+
+<PageTitle>Ticket</PageTitle>
+
+<div class="ticket-edit-page">
+    <div class="ticket-edit-header">
+        <div>
+            <h1 class="ticket-edit-title">Ticket</h1>
+            <p class="ticket-edit-subtitle">Consultez, modifiez et suivez l’activité du ticket.</p>
+        </div>
+
+        <a class="btn btn-outline-secondary ticket-back-btn" href="/tickets">
+            ← Retour aux tickets
+        </a>
+    </div>
+
+    @if (_loading)
+    {
+        <div class="ticket-card ticket-state-card">
+            <p class="mb-0">Chargement...</p>
+        </div>
+    }
+    else if (!string.IsNullOrWhiteSpace(_error))
+    {
+        <div class="alert alert-danger ticket-alert">@_error</div>
+    }
+    else if (_ticket is null)
+    {
+        <div class="ticket-card ticket-state-card">
+            <p class="text-danger mb-0">Ticket introuvable.</p>
+        </div>
+    }
+    else
+    {
+        <div class="ticket-meta-card ticket-card">
+            <div class="ticket-meta-top">
+                <div class="ticket-status-group">
+                    <span class="badge ticket-status-badge @GetStatusClass(_ticket.Statut)">
+                        @_ticket.Statut.GetDisplayName()
+                    </span>
+
+                    @if (_ticket.Statut != Status.Closed)
+                    {
+                        <button class="btn btn-outline-success btn-sm ticket-close-btn"
+                                disabled="@_closeBusy"
+                                @onclick="CloseTicketAsync">
+                            Clôturer
+                        </button>
+                    }
+                </div>
+
+                <div class="ticket-meta-dates">
+                    <span><strong>Créé :</strong> @_ticket.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                    <span><strong>Modifié :</strong> @_ticket.UpdatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+            </div>
+
+            @if (_ticket.Category is not null)
+            {
+                <div class="ticket-meta-bottom">
+                    <span class="ticket-category-badge">@_ticket.Category.Name</span>
+                </div>
+            }
+        </div>
+
+        <div class="ticket-card ticket-form-card">
+            <div class="section-header">
+                <h2>Informations du ticket</h2>
+                <p>Modifiez le titre ou la catégorie du ticket.</p>
+            </div>
+
+            <TicketForm Value="_form"
+                        Categories="_categories"
+                        SubmitText="Enregistrer"
+                        IsBusy="_busy"
+                        ShowCancel="true"
+                        OnSubmit="SaveAsync"
+                        OnCancel="Cancel" />
+        </div>
+
+        <div class="ticket-card ticket-comments-card">
+            <div class="section-header">
+                <h2>Commentaires</h2>
+                <p>Ajoutez un commentaire et consultez l’historique.</p>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(_commentError))
+            {
+                <div class="alert alert-danger ticket-alert mb-3">@_commentError</div>
+            }
+
+            <div class="comment-editor">
+                <textarea class="form-control comment-textarea"
+                          rows="4"
+                          @bind="_newComment"
+                          placeholder="Ajouter un commentaire..."></textarea>
+
+                <div class="comment-editor-actions">
+                    <button class="btn btn-primary comment-add-btn"
+                            disabled="@(_commentLoading || string.IsNullOrWhiteSpace(_newComment))"
+                            @onclick="SubmitCommentAsync">
+                        Ajouter
+                    </button>
+                </div>
+            </div>
+
+            @if (_ticket.Comments?.Count > 0)
+            {
+                <div class="comments-list">
+                    @foreach (var c in _ticket.Comments.OrderByDescending(x => x.CreatedAtUtc))
+                    {
+                        <div class="comment-item">
+                            <div class="comment-meta">
+                                <span class="comment-author">
+                                    @(c.Author?.FullName ?? c.Author?.Email ?? c.AuthorId.ToString())
+                                </span>
+                                <span class="comment-date">
+                                    @c.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                </span>
+                            </div>
+
+                            <div class="comment-message">
+                                @c.Message
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="ticket-empty-comments">
+                    Aucun commentaire.
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private bool _loading = true;
+    private bool _busy;
+    private string? _error;
+
+    private TicketResponse? _ticket;
+    private string _newComment = string.Empty;
+    private string? _commentError;
+    private bool _commentLoading;
+
+    private TicketForm.TicketFormModel _form = new();
+    private IReadOnlyList<TicketForm.CategoryItem> _categories = [];
+
+    private bool _closeBusy;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _loading = true;
+        _error = null;
+        _commentError = null;
+
+        try
+        {
+            var cats = await CategoriesApi.GetAllAsync();
+            _categories = cats
+                .Select(c => new TicketForm.CategoryItem(c.Id, c.Name))
+                .ToList();
+
+            await LoadTicketAsync();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+            _ticket = null;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task LoadTicketAsync()
+    {
+        _ticket = await TicketsApi.GetByIdAsync(Id);
+
+        if (_ticket is not null)
+        {
+            _form = new TicketForm.TicketFormModel
+            {
+                Title = _ticket.Title,
+                CategoryId = _ticket.CategoryId
+            };
+        }
+    }
+
+    private async Task SaveAsync(TicketForm.TicketFormModel model)
+    {
+        _busy = true;
+        _error = null;
+
+        try
+        {
+            _ticket = await TicketsApi.UpdateAsync(
+                Id,
+                new TicketUpdateRequest(model.Title, model.CategoryId));
+
+            _form = new TicketForm.TicketFormModel
+            {
+                Title = _ticket.Title,
+                CategoryId = _ticket.CategoryId
+            };
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task SubmitCommentAsync()
+    {
+        _commentError = null;
+        _commentLoading = true;
+
+        try
+        {
+            var result = await TicketsApi.AddCommentAsync(_ticket!.Id, _newComment.Trim());
+
+            if (!result.IsSuccess)
+            {
+                _commentError = result.ErrorMessage;
+                return;
+            }
+
+            _newComment = string.Empty;
+            await LoadTicketAsync();
+        }
+        catch (Exception ex)
+        {
+            _commentError = ex.Message;
+        }
+        finally
+        {
+            _commentLoading = false;
+        }
+    }
+
+    private async Task CloseTicketAsync()
+    {
+        _error = null;
+        _closeBusy = true;
+
+        try
+        {
+            var ok = await TicketsApi.CloseAsync(Id);
+
+            if (!ok)
+            {
+                _error = "Ticket introuvable.";
+                return;
+            }
+
+            await LoadTicketAsync();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _closeBusy = false;
+        }
+    }
+
+    private static string GetStatusClass(Status s) => s switch
+    {
+        Status.New => "status-new",
+        Status.InProcess => "status-inprocess",
+        Status.Closed => "status-closed",
+        _ => "status-default"
+    };
+
+    private Task Cancel()
+    {
+        Nav.NavigateTo("/tickets");
+        return Task.CompletedTask;
+    }
+}

@@ -1,0 +1,84 @@
+@page "/tickets/new"
+@using Ticketing.Client.Wasm.Services.Api
+@using Ticketing.Shared.Contracts.Tickets
+@using Ticketing.Client.Wasm.Components.Tickets
+@inject TicketsApiClient TicketsApi
+@inject CategoriesApiClient CategoriesApi
+@inject NavigationManager Nav
+
+<PageTitle>Nouveau ticket</PageTitle>
+
+<div class="ticket-create-page">
+    <div class="ticket-create-header">
+        <div>
+            <h1 class="ticket-create-title">Nouveau ticket</h1>
+            <p class="ticket-create-subtitle">Créez un ticket et associez-le à une catégorie.</p>
+        </div>
+
+        <a class="btn btn-outline-secondary ticket-back-btn" href="/tickets">
+            ← Retour aux tickets
+        </a>
+    </div>
+
+    @if (_loading)
+    {
+        <div class="ticket-create-card ticket-create-state">
+            <p class="mb-0">Chargement...</p>
+        </div>
+    }
+    else
+    {
+        <div class="ticket-create-card ticket-create-form-card">
+            <div class="section-header">
+                <h2>Informations du ticket</h2>
+                <p>Renseignez le titre et choisissez une catégorie.</p>
+            </div>
+
+            <TicketForm Value="_form"
+                        Categories="_categories"
+                        SubmitText="Créer"
+                        IsBusy="_busy"
+                        ShowCancel="true"
+                        OnSubmit="CreateAsync"
+                        OnCancel="Cancel" />
+        </div>
+    }
+</div>
+
+@code {
+    private bool _loading = true;
+    private bool _busy;
+
+    private TicketForm.TicketFormModel _form = new();
+    private IReadOnlyList<TicketForm.CategoryItem> _categories = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var cats = await CategoriesApi.GetAllAsync();
+        _categories = cats.Select(c => new TicketForm.CategoryItem(c.Id, c.Name)).ToList();
+        _loading = false;
+    }
+
+    private async Task CreateAsync(TicketForm.TicketFormModel model)
+    {
+        _busy = true;
+
+        try
+        {
+            var created = await TicketsApi.CreateAsync(
+                new TicketCreateRequest(model.Title, model.CategoryId));
+
+            Nav.NavigateTo($"/tickets/{created.Id}");
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private Task Cancel()
+    {
+        Nav.NavigateTo("/tickets");
+        return Task.CompletedTask;
+    }
+}

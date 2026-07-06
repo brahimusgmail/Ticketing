@@ -1,0 +1,163 @@
+.wasm-topbar {
+    background: linear-gradient(135deg, #183153 0%, #2f5d95 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    min-height: 72px;
+    padding: 0.75rem 1rem;
+}
+
+.brand-title {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+    text-decoration: none;
+    color: #fff !important;
+    font-weight: 800;
+    font-size: 1.1rem;
+}
+
+.brand-subtitle {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    font-weight: 600;
+}
+
+.nav-scrollable {
+    background: linear-gradient(180deg, #14263d 0%, #1b3552 50%, #102033 100%);
+    min-height: calc(100vh - 72px);
+    padding: 1rem 0.9rem;
+}
+
+.modern-nav {
+    gap: 0.75rem;
+}
+
+.modern-user-panel {
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.user-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c8cff 0%, #5b6df7 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(91, 109, 247, 0.35);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.user-name {
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    word-break: break-word;
+}
+
+.user-role {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.9rem;
+}
+
+.modern-logout-btn {
+    width: fit-content;
+    border-radius: 10px;
+    padding: 0.4rem 0.85rem;
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+    .modern-logout-btn:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.45);
+    }
+
+.nav-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-top: 0.25rem;
+}
+
+.modern-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: rgba(255, 255, 255, 0.88) !important;
+    text-decoration: none;
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+    .modern-nav-link:hover {
+        background: rgba(255, 255, 255, 0.10);
+        color: #ffffff !important;
+        transform: translateX(2px);
+    }
+
+    .modern-nav-link.active {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.35), rgba(59, 130, 246, 0.25));
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.10);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+.nav-icon {
+    width: 20px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.guest-panel {
+    padding-top: 0.5rem;
+}
+
+.modern-login-btn {
+    border-radius: 12px;
+    padding: 0.7rem 1rem;
+    font-weight: 600;
+}
+
+::deep .navbar-toggler {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+::deep .nav-link {
+    border-radius: 14px;
+}
+
+::deep .navbar-toggler {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .brand-title {
+        font-size: 1.35rem;
+    }
+
+    .modern-user-panel {
+        padding: 0.85rem;
+    }
+
+    .modern-nav-link {
+        padding: 0.8rem 0.9rem;
+    }
+}
+

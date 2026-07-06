@@ -1,0 +1,235 @@
+.tickets-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.page-header-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.6rem;
+    border-radius: 1.4rem;
+    background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 30%), linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    color: #f8fafc;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.14);
+}
+
+.page-eyebrow {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(96, 165, 250, 0.14);
+    color: #bfdbfe;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.page-title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.page-subtitle {
+    margin: 0.75rem 0 0;
+    max-width: 700px;
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+.page-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.action-btn {
+    min-width: 160px;
+    border-radius: 0.9rem;
+    padding: 0.8rem 1rem;
+    font-weight: 600;
+}
+
+.custom-alert {
+    margin-bottom: 0;
+    border-radius: 1rem;
+}
+
+.state-card,
+.table-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1.25rem;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.state-card {
+    padding: 1.5rem;
+}
+
+.state-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.state-text {
+    margin-top: 0.45rem;
+    margin-bottom: 1rem;
+    color: #475569;
+    line-height: 1.6;
+}
+
+.table-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.25rem 0.75rem;
+}
+
+.table-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.table-subtitle {
+    margin: 0.25rem 0 0;
+    color: #64748b;
+    font-size: 0.92rem;
+}
+
+.modern-table {
+    margin-bottom: 0;
+}
+
+    .modern-table thead th {
+        border-bottom: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        background: #f8fafc;
+        white-space: nowrap;
+    }
+
+    .modern-table tbody td {
+        vertical-align: middle;
+        border-color: #eef2f7;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+.ticket-link {
+    color: #0f172a;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .ticket-link:hover {
+        color: #2563eb;
+        text-decoration: underline;
+    }
+
+.cell-text,
+.date-text {
+    color: #334155;
+}
+
+.modern-badge {
+    padding: 0.5rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.status-new {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.status-in-progress {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.status-closed {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-default {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+.row-actions {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.6rem;
+}
+
+.delete-confirm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 0.9rem;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+}
+
+.delete-confirm-text {
+    color: #9a3412;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+@media (max-width: 992px) {
+    .page-header-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .page-actions {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .tickets-page {
+        padding: 1rem;
+    }
+
+    .page-header-card,
+    .state-card,
+    .table-card {
+        border-radius: 1rem;
+    }
+
+    .page-title {
+        font-size: 1.7rem;
+    }
+
+    .action-btn {
+        width: 100%;
+    }
+
+    .table-toolbar {
+        padding: 1rem 1rem 0.5rem;
+    }
+}

@@ -1,0 +1,70 @@
+@using System.ComponentModel.DataAnnotations
+
+<EditForm Model="_model" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Titre</label>
+        <InputText class="form-control" @bind-Value="_model.Title" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Catégorie</label>
+        <InputSelect class="form-select" @bind-Value="_model.CategoryId">
+            <option value="">-- Choisir --</option>
+            @if (Categories is not null)
+            {
+                @foreach (var c in Categories)
+                {
+                    <option value="@c.Id">@c.Name</option>
+                }
+            }
+        </InputSelect>
+    </div>
+
+    <button class="btn btn-primary" disabled="@IsBusy">@SubmitText</button>
+
+    @if (ShowCancel)
+    {
+        <button type="button" class="btn btn-secondary ms-2" @onclick="OnCancel" disabled="@IsBusy">Annuler</button>
+    }
+</EditForm>
+
+@code {
+    [Parameter] public TicketFormModel? Value { get; set; }
+    [Parameter] public IReadOnlyList<CategoryItem>? Categories { get; set; }
+    [Parameter] public string SubmitText { get; set; } = "Enregistrer";
+    [Parameter] public bool IsBusy { get; set; }
+    [Parameter] public bool ShowCancel { get; set; } = true;
+
+    [Parameter] public EventCallback<TicketFormModel> OnSubmit { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private TicketFormModel _model = new();
+
+    protected override void OnParametersSet()
+    {
+        _model = Value is null
+            ? new TicketFormModel()
+            : new TicketFormModel
+            {
+                Title = Value.Title,
+                CategoryId = Value.CategoryId
+            };
+    }
+
+    private Task HandleValidSubmit() => OnSubmit.InvokeAsync(_model);
+
+    public sealed class TicketFormModel
+    {
+        [Required(ErrorMessage = "Le titre est obligatoire.")]
+        [MinLength(3, ErrorMessage = "Le titre doit contenir au moins 3 caractères.")]
+        public string Title { get; set; } = "";
+
+        [Required(ErrorMessage = "Catégorie obligatoire.")]
+        public Guid? CategoryId { get; set; } = Guid.Empty;
+    }
+
+    public sealed record CategoryItem(Guid Id, string Name);
+}

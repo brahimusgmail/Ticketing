@@ -1,0 +1,115 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@inject Ticketing.Client.Server.Services.Auth.AuthService Auth
+@inject Ticketing.Client.Server.Services.Auth.CurrentUserService CurrentUser
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider AuthStateProvider
+
+<div class="top-row app-topbar">
+    <div class="brand-wrap">
+        <a class="brand-link" href="">
+            <span class="brand-badge">T</span>
+            <span class="brand-text">
+                <span class="brand-title">Ticketing</span>
+                <span class="brand-subtitle">Server</span>
+            </span>
+        </a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="nav flex-column side-nav-shell">
+        <AuthorizeView>
+            <Authorized>
+                <div class="user-card">
+                    <div class="user-avatar">
+                        @GetInitial()
+                    </div>
+
+                    <div class="user-meta">
+                        <div class="user-name">@DisplayName</div>
+
+                        @if (CurrentUser.User?.Roles?.Length > 0)
+                        {
+                            <div class="user-role">
+                                @string.Join(", ", CurrentUser.User.Roles)
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Navigation</div>
+
+                    <NavLink class="nav-link modern-nav-link" href="/tickets">
+                        <span class="nav-icon">🎫</span>
+                        <span>Tickets</span>
+                    </NavLink>
+
+                    <NavLink href="/categories" class="nav-link modern-nav-link">
+                        <span class="nav-icon">🏷️</span>
+                        <span>Catégories</span>
+                    </NavLink>
+                </div>
+
+                <div class="nav-footer">
+                    <button type="button" class="btn btn-outline-light btn-sm logout-btn" @onclick="LogoutAsync">
+                        Déconnexion
+                    </button>
+                </div>
+            </Authorized>
+
+            <NotAuthorized>
+                <div class="guest-card">
+                    <div class="guest-title">Bienvenue</div>
+                    <div class="guest-text">
+                        Connecte-toi pour accéder à l’application Ticketing.
+                    </div>
+
+                    <NavLink class="btn btn-primary login-btn" href="/login">
+                        Se connecter
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+    </nav>
+</div>
+
+@code {
+    private string DisplayName
+        => CurrentUser.User?.FullName
+        ?? CurrentUser.User?.Email
+        ?? "Connecté";
+
+    private async Task LogoutAsync()
+    {
+        await Auth.LogoutAsync();
+        Nav.NavigateTo("/login", true);
+    }
+
+    protected override void OnInitialized()
+    {
+        CurrentUser.OnChange += HandleChange;
+    }
+
+    private void HandleChange()
+        => InvokeAsync(StateHasChanged);
+
+    private string GetInitial()
+    {
+        var source = CurrentUser.User?.FullName ?? CurrentUser.User?.Email;
+
+        if (string.IsNullOrWhiteSpace(source))
+        {
+            return "U";
+        }
+
+        return source.Trim()[0].ToString().ToUpperInvariant();
+    }
+
+    public void Dispose()
+    {
+        CurrentUser.OnChange -= HandleChange;
+    }
+}

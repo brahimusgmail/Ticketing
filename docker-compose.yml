@@ -1,0 +1,27 @@
+services:
+  ticketing-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ticketing-api
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__DefaultConnection: "Server=ticketing-sql,1433;Database=TicketingDb;User Id=sa;Password=Password123!;TrustServerCertificate=True;"
+    depends_on:
+      - ticketing-sql
+
+  ticketing-sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ticketing-sql
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Password123!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ticketing-sql-data:/var/opt/mssql
+
+volumes:
+  ticketing-sql-data:

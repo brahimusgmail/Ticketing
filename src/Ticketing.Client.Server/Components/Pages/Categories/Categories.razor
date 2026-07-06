@@ -1,0 +1,252 @@
+@page "/categories"
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Authorization
+@using Ticketing.Client.Server.Services.Api
+@using Ticketing.Shared.Contracts.Categories
+@inject CategoriesApiClient Api
+
+<PageTitle>Catégories</PageTitle>
+
+<div class="categories-page">
+    @if (_loading)
+    {
+        <section class="state-card">
+            <div class="state-title">Chargement…</div>
+            <p class="state-text">Récupération des catégories en cours.</p>
+        </section>
+    }
+    else
+    {
+        <section class="page-hero-card">
+            <div class="page-hero-main">
+                <div class="page-eyebrow">Ticketing</div>
+                <h1 class="page-title">Catégories</h1>
+                <p class="page-subtitle">
+                    Gère les catégories utilisées pour organiser les tickets.
+                </p>
+            </div>
+        </section>
+ 
+        <div class="content-grid">
+            <section class="content-card">
+                <div class="section-header">
+                    <h2 class="section-title">Nouvelle catégorie</h2>
+                    <p class="section-subtitle">
+                        Ajoute une catégorie avec un nom et une description optionnelle.
+                    </p>
+                </div>
+
+                <EditForm Model="_create" OnValidSubmit="CreateAsync" class="category-form">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="validation-summary" />
+
+                    <div class="form-field">
+                        <label class="form-label">Nom</label>
+                        <InputText class="form-control form-control-modern" @bind-Value="_create.Name" />
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label">Description</label>
+                        <InputTextArea class="form-control form-control-modern form-textarea-modern"
+                                       @bind-Value="_create.Description" />
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary action-btn" disabled="@_busy">
+                            @(_busy ? "Ajout..." : "Ajouter")
+                        </button>
+                    </div>
+                </EditForm>
+            </section>
+
+            <section class="content-card">
+                <div class="section-header">
+                    <h2 class="section-title">Liste des catégories</h2>
+                    <p class="section-subtitle">@_items.Count catégorie(s)</p>
+                </div>
+
+                @if (_items.Count == 0)
+                {
+                    <div class="empty-state">
+                        Aucune catégories.
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table modern-table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Description</th>
+                                    <th class="text-end actions-column">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in _items)
+                                {
+                                    var isEditing = _editId == c.Id;
+
+                                    <tr>
+                                        <td>
+                                            @if (isEditing)
+                                            {
+                                                <InputText class="form-control form-control-modern form-control-sm-modern"
+                                                           @bind-Value="_edit.Name" />
+                                            }
+                                            else
+                                            {
+                                                <span class="cell-title">@c.Name</span>
+                                            }
+                                        </td>
+
+                                        <td>
+                                            @if (isEditing)
+                                            {
+                                                <InputText class="form-control form-control-modern form-control-sm-modern"
+                                                           @bind-Value="_edit.Description" />
+                                            }
+                                            else
+                                            {
+                                                <span class="cell-text">@(string.IsNullOrWhiteSpace(c.Description) ? "-" : c.Description)</span>
+                                            }
+                                        </td>
+
+                                        <td class="text-end">
+                                            @if (isEditing)
+                                            {
+                                                <div class="row-actions">
+                                                    <button class="btn btn-sm btn-success"
+                                                            disabled="@_busy"
+                                                            @onclick="() => SaveAsync(c.Id)">
+                                                        Enregistrer
+                                                    </button>
+
+                                                    <button class="btn btn-sm btn-secondary"
+                                                            disabled="@_busy"
+                                                            @onclick="CancelEdit">
+                                                        Annuler
+                                                    </button>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="row-actions">
+                                                    <button class="btn btn-sm btn-outline-primary"
+                                                            disabled="@_busy"
+                                                            @onclick="() => StartEdit(c)">
+                                                        Éditer
+                                                    </button>
+
+                                                    <button class="btn btn-sm btn-outline-danger"
+                                                            disabled="@_busy"
+                                                            @onclick="() => DeleteAsync(c.Id)">
+                                                        Supprimer
+                                                    </button>
+                                                </div>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </section>
+        </div>
+    }
+</div>
+
+@code {
+    private bool _loading = true;
+    private bool _busy;
+
+    private List<CategoryResponse> _items = [];
+
+    private CreateModel _create = new();
+
+    private Guid? _editId;
+    private EditModel _edit = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _items = (await Api.GetAllAsync()).OrderBy(x => x.Name).ToList();
+        _loading = false;
+    }
+
+    private async Task CreateAsync()
+    {
+        _busy = true;
+        try
+        {
+            var created = await Api.CreateAsync(new CategoryCreateRequest(_create.Name, _create.Description));
+            _items.Add(created);
+            _items = _items.OrderBy(x => x.Name).ToList();
+            _create = new();
+        }
+        finally { _busy = false; }
+    }
+
+    private void StartEdit(CategoryResponse c)
+    {
+        _editId = c.Id;
+        _edit = new EditModel { Name = c.Name, Description = c.Description };
+    }
+
+    private void CancelEdit()
+    {
+        _editId = null;
+        _edit = new();
+    }
+
+    private async Task SaveAsync(Guid id)
+    {
+        _busy = true;
+        try
+        {
+            var updated = await Api.UpdateAsync(id, new CategoryUpdateRequest(_edit.Name, _edit.Description));
+
+            var idx = _items.FindIndex(x => x.Id == id);
+            if (idx >= 0)
+                _items[idx] = updated;
+
+            _items = _items.OrderBy(x => x.Name).ToList();
+            CancelEdit();
+        }
+        finally { _busy = false; }
+    }
+
+    private async Task DeleteAsync(Guid id)
+    {
+        _busy = true;
+        try
+        {
+            await Api.DeleteAsync(id);
+            _items.RemoveAll(x => x.Id == id);
+
+            if (_editId == id)
+                CancelEdit();
+        }
+        finally { _busy = false; }
+    }
+
+    private sealed class CreateModel
+    {
+        [Display(Name = "Nom")]
+        [Required(ErrorMessage = "Le nom est obligatoire.")]
+        [MinLength(2, ErrorMessage = "Le nom doit contenir au moins 2 caractères.")]
+        public string Name { get; set; } = string.Empty;
+
+        public string? Description { get; set; }
+    }
+
+    private sealed class EditModel
+    {
+        [Display(Name = "Nom")]
+        [Required(ErrorMessage = "Le nom est obligatoire.")]
+        [MinLength(2, ErrorMessage = "Le nom doit contenir au moins 2 caractères.")]
+        public string Name { get; set; } = string.Empty;
+        
+        public string? Description { get; set; }
+    }
+}

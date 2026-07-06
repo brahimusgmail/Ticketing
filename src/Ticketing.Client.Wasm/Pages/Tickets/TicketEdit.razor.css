@@ -1,0 +1,248 @@
+.ticket-edit-page {
+    padding: 2rem 2.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.ticket-edit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.ticket-edit-title {
+    margin: 0;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #132238;
+    letter-spacing: -0.02em;
+}
+
+.ticket-edit-subtitle {
+    margin: 0.35rem 0 0 0;
+    color: #607086;
+    font-size: 1rem;
+}
+
+.ticket-back-btn {
+    border-radius: 12px;
+    padding: 0.7rem 1rem;
+    font-weight: 600;
+}
+
+.ticket-card {
+    background: #ffffff;
+    border: 1px solid #e7edf5;
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.ticket-state-card {
+    padding: 1.25rem;
+    color: #5d6b7c;
+}
+
+.ticket-alert {
+    border-radius: 14px;
+    margin-bottom: 0;
+}
+
+.ticket-meta-card {
+    padding: 1.25rem 1.5rem;
+}
+
+.ticket-meta-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.ticket-status-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.ticket-status-badge {
+    border-radius: 999px;
+    padding: 0.48rem 0.78rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.status-new {
+    background: #2f80ed !important;
+    color: #fff;
+}
+
+.status-inprocess {
+    background: #f3b63f !important;
+    color: #1f2937;
+}
+
+.status-closed {
+    background: #1f9d68 !important;
+    color: #fff;
+}
+
+.status-default {
+    background: #6b7280 !important;
+    color: #fff;
+}
+
+.ticket-close-btn {
+    border-radius: 10px;
+}
+
+.ticket-meta-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    color: #556579;
+    font-size: 0.95rem;
+}
+
+.ticket-meta-bottom {
+    margin-top: 1rem;
+}
+
+.ticket-category-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    background: #eef4fb;
+    color: #29496d;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.ticket-form-card,
+.ticket-comments-card {
+    padding: 1.5rem;
+}
+
+.section-header {
+    margin-bottom: 1.25rem;
+}
+
+    .section-header h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #16283d;
+    }
+
+    .section-header p {
+        margin: 0.35rem 0 0 0;
+        color: #607086;
+    }
+
+.comment-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.comment-textarea {
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    min-height: 120px;
+    border: 1px solid #d9e2ec;
+    box-shadow: none;
+}
+
+    .comment-textarea:focus {
+        border-color: #7aa7e0;
+        box-shadow: 0 0 0 0.2rem rgba(47, 128, 237, 0.12);
+    }
+
+.comment-editor-actions {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.comment-add-btn {
+    border-radius: 12px;
+    padding: 0.65rem 1rem;
+    font-weight: 600;
+}
+
+.comments-list {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.comment-item {
+    border: 1px solid #e8eef5;
+    border-radius: 16px;
+    padding: 1rem 1.1rem;
+    background: #fbfdff;
+}
+
+.comment-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.45rem;
+}
+
+.comment-author {
+    font-weight: 700;
+    color: #21364d;
+}
+
+.comment-date {
+    color: #6a7a8d;
+    font-size: 0.9rem;
+}
+
+.comment-message {
+    color: #27384b;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.ticket-empty-comments {
+    margin-top: 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 14px;
+    background: #f8fbff;
+    color: #607086;
+    border: 1px dashed #dbe5f0;
+}
+
+@media (max-width: 992px) {
+    .ticket-edit-page {
+        padding: 1.25rem;
+    }
+
+    .ticket-edit-title {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .ticket-edit-header {
+        align-items: stretch;
+    }
+
+    .ticket-back-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .ticket-meta-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

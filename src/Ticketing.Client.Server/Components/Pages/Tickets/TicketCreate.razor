@@ -1,0 +1,87 @@
+@page "/tickets/new"
+@using Ticketing.Client.Server.Services
+@using Ticketing.Client.Server.Services.Api
+@using Ticketing.Shared.Contracts.Tickets
+@using Ticketing.Client.Server.Components.Tickets
+@inject TicketsApiClient TicketsApi
+@inject CategoriesApiClient CategoriesApi
+@inject NavigationManager Nav
+
+<PageTitle>Nouveau ticket</PageTitle>
+
+<div class="ticket-create-page">
+    @if (_loading)
+    {
+        <section class="state-card">
+            <div class="state-title">Chargement…</div>
+            <p class="state-text">Récupération des catégories en cours.</p>
+        </section>
+    }
+    else
+    {
+        <section class="create-hero-card">
+            <div class="create-hero-main">
+                <div class="create-eyebrow">Ticketing</div>
+                <h1 class="create-title">Nouveau ticket</h1>
+                <p class="create-subtitle">
+                    Crée un nouveau ticket en renseignant un titre et une catégorie.
+                </p>
+            </div>
+
+            <div class="create-hero-actions">
+                <button type="button" class="btn btn-outline-secondary action-btn" @onclick="Cancel">
+                    Retour à la liste
+                </button>
+            </div>
+        </section>
+
+        <section class="form-card">
+            <div class="section-header">
+                <h2 class="section-title">Informations du ticket</h2>
+                <p class="section-subtitle">
+                    La création reste identique côté logique, seule la présentation est modernisée.
+                </p>
+            </div>
+
+            <TicketForm Value="_form"
+                        Categories="_categories"
+                        SubmitText="Créer"
+                        IsBusy="_busy"
+                        ShowCancel="true"
+                        OnSubmit="CreateAsync"
+                        OnCancel="Cancel" />
+        </section>
+    }
+</div>
+
+@code {
+    private bool _loading = true;
+    private bool _busy;
+
+    private TicketForm.TicketFormModel _form = new();
+    private IReadOnlyList<TicketForm.CategoryItem> _categories = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var cats = await CategoriesApi.GetAllAsync();
+        _categories = cats.Select(c => new TicketForm.CategoryItem(c.Id, c.Name)).ToList();
+        _loading = false;
+    }
+
+    private async Task CreateAsync(TicketForm.TicketFormModel m)
+    {
+        _busy = true;
+        try
+        {
+            var created = await TicketsApi.CreateAsync(new TicketCreateRequest(m.Title, m.CategoryId));
+            Nav.NavigateTo($"/tickets/{created.Id}");
+        }
+        finally { _busy = false; }
+    }
+
+    private Task Cancel()
+    {
+        Nav.NavigateTo("/tickets");
+        return Task.CompletedTask;
+    }
+}
