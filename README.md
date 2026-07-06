@@ -222,8 +222,6 @@ dotnet run --project src/Ticketing.Blazor
 
 ## 📸 Screenshots
 
-## 📸 Screenshots
-
 <p align="center">
   <img src="docs/screenshots/tickets.png" width="30%">
   <img src="docs/screenshots/ticket-detail.png" width="30%">
