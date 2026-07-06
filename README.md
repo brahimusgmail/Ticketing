@@ -21,6 +21,22 @@ Modern enterprise Ticket Management System built with **.NET 10**, **Blazor**, *
   <img src="docs/swagger-demo.gif" width="95%">
 </p>
 
+## 📑 Table of Contents
+
+- Overview
+- Why this project?
+- Features
+- Architecture
+- Getting Started
+- Screenshots
+- AI Features
+- Testing
+- Logging & Error Handling
+- Security
+- CI/CD
+- Roadmap
+- License
+
 Overview
 
 TicketingAI is a modern full-stack ticket management application demonstrating current .NET development practices together with practical Artificial Intelligence integration.
@@ -47,6 +63,24 @@ testing
 semantic search
 vector databases
 local Large Language Models
+
+## ⭐ Highlights
+
+- ✅ Clean Architecture
+- ✅ CQRS
+- ✅ JWT Authentication
+- ✅ Refresh Token Rotation
+- ✅ Blazor Server & WebAssembly
+- ✅ SQL Server
+- ✅ Entity Framework Core
+- ✅ AI Agent
+- ✅ RAG
+- ✅ MCP
+- ✅ Qdrant
+- ✅ Embeddings
+- ✅ Docker
+- ✅ Unit Tests
+- ✅ Integration Tests
 
 ## ✨ Features
 
@@ -260,25 +294,25 @@ The Retrieval-Augmented Generation pipeline consists of:
 6. LLM response generation
 
 
-User Question
-      │
-      ▼
- Embedding
-      │
-      ▼
-Qdrant Search
-      │
-      ▼
-Relevant Documents
-      │
-      ▼
-Prompt
-      │
-      ▼
-Llama 3.2
-      │
-      ▼
-Answer
+                 User Question
+                       │
+                       ▼
+              Generate Embedding
+                       │
+                       ▼
+            Search in Qdrant Vector DB
+                       │
+                       ▼
+           Retrieve Relevant Chunks
+                       │
+                       ▼
+          Build Prompt + Context
+                       │
+                       ▼
+                  Llama 3.2
+                       │
+                       ▼
+                  Final Answer
 
 
 ## MCP Integration
@@ -290,6 +324,21 @@ Implemented tools:
 - Get Ticket by Id
 - Count Open Tickets
 - List Available Tools
+
+          User
+            │
+            ▼
+      AI Agent
+            │
+     ┌──────┴──────┐
+     ▼             ▼
+ Get Ticket     Count Open
+    Tool          Tickets
+     │             │
+     └──────┬──────┘
+            ▼
+        SQL Server
+
 
 
 ### AI Stack
@@ -378,3 +427,11 @@ Current DevOps features:
 ## 📄 License
 
 This project is released under the MIT License.
+
+## 👨‍💻 Author
+
+**Ibrahim Zebdi**
+
+Senior .NET Developer
+
+GitHub: https://github.com/brahimusgmail
