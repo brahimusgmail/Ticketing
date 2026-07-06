@@ -1,6 +1,7 @@
 # 🚀 TicketingAI
 
 > Modern Ticket Management System built with **.NET 10**, **Blazor**, **SQL Server** and a complete **Retrieval-Augmented Generation (RAG)** engine powered by a local **Llama 3.2** model.
+<p align="center">
 
 ![.NET](https://img.shields.io/badge/.NET-10-blue)
 
@@ -22,9 +23,13 @@
 
 ![License](https://img.shields.io/badge/License-MIT-green)
 
+</p>
+
 ## Demo
 
-![Demo](docs/swagger-demo.gif)
+<p align="center">
+  <img src="docs/swagger-demo.gif" width="95%">
+</p>
 
 Overview
 
@@ -217,17 +222,13 @@ dotnet run --project src/Ticketing.Blazor
 
 ## 📸 Screenshots
 
-### Tickets
+## 📸 Screenshots
 
-![Tickets](docs/screenshots/tickets.png)
-
-### Ticket Details
-
-![Ticket Details](docs/screenshots/ticket-detail.png)
-
-### Categories
-
-![Categories](docs/screenshots/categories.png)
+<p align="center">
+  <img src="docs/screenshots/tickets.png" width="30%">
+  <img src="docs/screenshots/ticket-detail.png" width="30%">
+  <img src="docs/screenshots/categories.png" width="30%">
+</p>
 
 
 ## 🤖 AI Features
