@@ -3,27 +3,16 @@
 Modern enterprise Ticket Management System built with **.NET 10**, **Blazor**, **SQL Server** and a complete **AI-powered RAG engine** using **Llama 3.2**, **Nomic Embeddings**, **Qdrant** and **MCP**.
 
 <p align="center">
-
-![.NET](https://img.shields.io/badge/.NET-10-blue)
-
-![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-WebAPI-blue)
-
-![Blazor](https://img.shields.io/badge/Blazor-Server%20%2B%20WASM-purple)
-
-![SQL Server](https://img.shields.io/badge/SQL%20Server-Database-red)
-
-![Entity Framework Core](https://img.shields.io/badge/EF%20Core-ORM-green)
-
-![JWT](https://img.shields.io/badge/JWT-Authentication-orange)
-
-![RAG](https://img.shields.io/badge/AI-RAG-orange)
-
-![Qdrant](https://img.shields.io/badge/Qdrant-VectorDB-blueviolet)
-
-![Llama 3.2](https://img.shields.io/badge/Llama-3.2-success)
-
-![License](https://img.shields.io/badge/License-MIT-green)
-
+  <img src="https://img.shields.io/badge/.NET-10-blue" />
+  <img src="https://img.shields.io/badge/ASP.NET%20Core-WebAPI-blue" />
+  <img src="https://img.shields.io/badge/Blazor-Server%20%2B%20WASM-purple" />
+  <img src="https://img.shields.io/badge/SQL%20Server-Database-red" />
+  <img src="https://img.shields.io/badge/EF%20Core-ORM-green" />
+  <img src="https://img.shields.io/badge/JWT-Authentication-orange" />
+  <img src="https://img.shields.io/badge/AI-RAG-orange" />
+  <img src="https://img.shields.io/badge/Qdrant-VectorDB-purple" />
+  <img src="https://img.shields.io/badge/Llama-3.2-brightgreen" />
+  <img src="https://img.shields.io/badge/License-MIT-green" />
 </p>
 
 ## Demo
@@ -223,11 +212,17 @@ dotnet run --project src/Ticketing.Blazor
 
 ## 📸 Screenshots
 
-<p align="center">
-  <img src="docs/screenshots/tickets.png" width="30%">
-  <img src="docs/screenshots/ticket-detail.png" width="30%">
-  <img src="docs/screenshots/categories.png" width="30%">
-</p>
+### Tickets
+
+![Tickets](docs/screenshots/tickets.png)
+
+### Ticket Details
+
+![Ticket Details](docs/screenshots/ticket-detail.png)
+
+### Categories
+
+![Categories](docs/screenshots/categories.png)
 
 
 ## 🤖 AI Features
@@ -263,6 +258,39 @@ The Retrieval-Augmented Generation pipeline consists of:
 4. Vector storage in Qdrant
 5. Semantic search
 6. LLM response generation
+
+
+User Question
+      │
+      ▼
+ Embedding
+      │
+      ▼
+Qdrant Search
+      │
+      ▼
+Relevant Documents
+      │
+      ▼
+Prompt
+      │
+      ▼
+Llama 3.2
+      │
+      ▼
+Answer
+
+
+## MCP Integration
+
+The AI Agent can invoke external tools through the Model Context Protocol.
+
+Implemented tools:
+
+- Get Ticket by Id
+- Count Open Tickets
+- List Available Tools
+
 
 ### AI Stack
 
