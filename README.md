@@ -134,44 +134,11 @@ local Large Language Models
 
 ## 🏗️ Architecture
 
-The project follows the principles of **Clean Architecture** to ensure maintainability, scalability, and testability.
+The project follows the principles of Clean Architecture to ensure maintainability, scalability, and testability.
 
-```text
-                           +----------------------+
-                           |      Blazor UI       |
-                           +----------+-----------+
-                                      |
-                                      v
-                           +----------------------+
-                           |     ASP.NET Core     |
-                           |      REST API        |
-                           +----------+-----------+
-                                      |
-                                      v
-                     +-------------------------------+
-                     |          Application          |
-                     | Services • CQRS • DTOs        |
-                     +---------------+---------------+
-                                     |
-                                     v
-                     +-------------------------------+
-                     |            Domain             |
-                     | Entities • Interfaces • Rules |
-                     +---------------+---------------+
-                                     |
-                                     v
-                     +-------------------------------+
-                     |        Infrastructure         |
-                     | EF Core • Identity • Logging  |
-                     +---------------+---------------+
-                                     |
-              +----------------------+----------------------+
-              |                      |                      |
-              v                      v                      v
-      +---------------+      +---------------+      +---------------+
-      | SQL Server    |      |   Qdrant      |      | LLM / Ollama  |
-      +---------------+      +---------------+      +---------------+
-```
+<p align="center">
+  <img src="docs/architecture-rag-mcp.png" width="100%" alt="Architecture Diagram">
+</p>
 
 ### Project Structure
 
